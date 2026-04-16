@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>未来研究所AIRA - 次世代のデザイン研究所</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for SNS Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --lab-blue-light: #D6E6F2;
+            --lab-beige: #F5E8D3;
+            --lab-brown: #8D775F;
+            --lab-white: #FFFFFF;
+            --text-main: #5A4A42;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', 'M PLUS Rounded 1c', sans-serif;
+            background-color: var(--lab-beige);
+            background-image: radial-gradient(var(--lab-blue-light) 1.5px, transparent 1.5px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        header, footer {
+            background-color: var(--lab-white);
+            border-bottom: 4px solid var(--lab-blue-light);
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 2px solid var(--lab-blue-light);
+            border-radius: 40px;
+        }
+
+        .hero-section {
+            background: linear-gradient(180deg, var(--lab-blue-light) 0%, var(--lab-white) 100%);
+            min-height: 85vh;
+            border-bottom: 12px solid var(--lab-white);
+            position: relative;
+        }
+
+        .floating {
+            animation: floating 4s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .cta-button {
+            background: var(--lab-brown);
+            color: white;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 0 #6d5b49;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 0 #6d5b49;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+            aspect-ratio: 1/1;
+        }
+
+        #dynamic-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            object-fit: cover;
+            background-color: white;
+        }
+
+        #chat-window {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        #chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+            scrollbar-width: thin;
+        }
+
+        .message-bubble {
+            max-width: 85%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .ai-message {
+            background-color: var(--lab-blue-light);
+            color: var(--text-main);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .user-message {
+            background-color: var(--lab-brown);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+            margin-left: auto;
+        }
+
+        .magic-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            animation: particle-fade 1s ease-out forwards;
+        }
+
+        @keyframes particle-fade {
+            0% { transform: scale(1) translate(0, 0); opacity: 1; }
+            100% { transform: scale(0) translate(var(--mx), var(--my)); opacity: 0; }
+        }
+
+        .sns-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .sns-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--lab-blue-light);
+            background: white;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full border-2 border-stone-200 overflow-hidden bg-white">
+                    <div id="mini-avatar-container" class="w-full h-full"></div>
+                </div>
+                <h1 class="text-xl font-bold tracking-tighter text-stone-700">未来研究所AIRA</h1>
+            </div>
+            <nav class="hidden md:flex gap-8 font-bold text-stone-600 text-sm">
+                <a href="#intro" class="hover:text-stone-400 transition">AIRAについて</a>
+                <a href="#services" class="hover:text-stone-400 transition">研究コース</a>
+                <a href="#sns" class="hover:text-stone-400 transition">SNS接続</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero-section flex flex-col items-center justify-center text-center px-6 pt-10 pb-20 overflow-hidden">
+        <div class="z-10 max-w-5xl w-full">
+            <div class="avatar-container floating mb-8 relative">
+                <div id="avatar-wrapper" class="w-full h-full rounded-full overflow-hidden">
+                    <div id="fallback-svg" class="w-full h-full">
+                        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="200" cy="200" r="200" fill="white"/>
+                            <circle cx="200" cy="200" r="185" fill="#FDF8F0"/>
+                            <path d="M120 400 Q200 280 280 400" fill="#f0f0f0" stroke="#8D775F" stroke-width="2"/>
+                            <circle cx="200" cy="200" r="70" fill="#FFF4EA" stroke="#8D775F" stroke-width="2"/>
+                            <path d="M130 150 Q110 100 140 100 L160 120 M270 150 Q290 100 260 100 L240 120" fill="white" stroke="#8D775F" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+                <div id="loader" class="absolute inset-0 flex items-center justify-center hidden">
+                    <div class="w-20 h-20 border-8 border-stone-200 border-t-stone-800 rounded-full animate-spin"></div>
+                </div>
+            </div>
+
+            <h2 class="text-4xl md:text-6xl font-black mb-6 text-stone-800 leading-tight">
+                AIという魔法の杖で、<br>
+                <span class="text-white bg-stone-700 px-4 py-1 inline-block transform -rotate-2">未来をデザインする。</span>
+            </h2>
+            <p class="text-lg md:text-xl text-stone-600 mb-10 font-medium max-w-2xl mx-auto px-4">
+                未来研究所AIRAへようこそ。<br>
+                高度なAI知能を持つAIRAが、あなたの創造力を未知の領域へサポートします。
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center px-6">
+                <button onclick="toggleChat()" class="cta-button w-full sm:w-auto px-12 py-5 rounded-full text-xl font-bold">
+                    AIRAに相談する ✨
+                </button>
+                <button onclick="generateNewAvatar()" class="bg-white border-4 border-stone-200 w-full sm:w-auto px-12 py-5 rounded-full text-xl font-bold text-stone-600 hover:border-blue-200 transition">
+                    AIRAを再構成する 🪄
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SNS Section -->
+    <section id="sns" class="py-20 px-6 max-w-6xl mx-auto text-center">
+        <h3 class="text-3xl font-bold mb-12">未来研究所AIRA 接続チャンネル</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <!-- YouTube -->
+            <a href="https://www.youtube.com/@AIRA_Reboot" target="_blank" class="sns-card glass-morphism p-8 flex flex-col items-center gap-4">
+                <i class="fab fa-youtube text-4xl text-red-500"></i>
+                <span class="font-bold">YouTube</span>
+            </a>
+            <!-- note -->
+            <a href="https://note.com/cocoroyorimichi" target="_blank" class="sns-card glass-morphism p-8 flex flex-col items-center gap-4">
+                <i class="fas fa-file-alt text-4xl text-emerald-500"></i>
+                <span class="font-bold">note</span>
+            </a>
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/coco_31c/?hl=ja" target="_blank" class="sns-card glass-morphism p-8 flex flex-col items-center gap-4">
+                <i class="fab fa-instagram text-4xl text-pink-500"></i>
+                <span class="font-bold">Instagram</span>
+            </a>
+            <!-- X (Twitter) -->
+            <a href="https://x.com/cocoro_31c" target="_blank" class="sns-card glass-morphism p-8 flex flex-col items-center gap-4">
+                <i class="fab fa-x-twitter text-4xl text-stone-800"></i>
+                <span class="font-bold">X</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- AI Chat Window -->
+    <div id="chat-window" class="glass-morphism bg-white shadow-2xl">
+        <div class="bg-stone-700 text-white p-4 font-bold flex justify-between items-center">
+            <span>🧪 未来研究所AIRA コンソール</span>
+            <button onclick="toggleChat()" class="text-white hover:text-stone-300">✕</button>
+        </div>
+        <div id="chat-messages" class="flex flex-col gap-2">
+            <div class="message-bubble ai-message">
+                アクセスありがとうございます。私は未来研究所AIRAです。今日はどのようなクリエイティブな実験をお手伝いしましょうか？🐈
+            </div>
+        </div>
+        <div class="p-3 border-t bg-stone-50 flex gap-2">
+            <input type="text" id="chat-input" placeholder="AIRAへの指令を入力..." class="flex-grow px-4 py-2 rounded-full border outline-none focus:border-stone-400 text-sm">
+            <button onclick="sendMessage()" class="bg-stone-700 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-stone-600 transition">
+                🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- Intro Section -->
+    <section id="intro" class="py-24 px-6 max-w-6xl mx-auto">
+        <div class="flex flex-col md:flex-row items-center gap-12">
+            <div class="flex-1">
+                <div class="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-600 font-bold text-xs mb-4">SYSTEM AIRA</div>
+                <h3 class="text-3xl font-bold mb-6">未来研究所AIRAが導く新時代。</h3>
+                <p class="text-stone-600 leading-relaxed mb-6">
+                    AIRAは、あなたのアイデアを解析し、最適なプロンプトや色彩設計を提案する次世代のAIパートナーです。
+                </p>
+                <button onclick="generateIdea()" class="bg-blue-100 text-blue-700 px-6 py-3 rounded-full font-bold hover:bg-blue-200 transition">
+                    ✨ AIRAのアイデアログを閲覧
+                </button>
+                <div id="idea-display" class="mt-4 p-4 border-2 border-dashed border-blue-200 rounded-2xl hidden italic text-stone-500"></div>
+            </div>
+            <div class="flex-1 grid grid-cols-2 gap-4">
+                <div class="glass-morphism p-8 text-center bg-white shadow-xl text-3xl">🔭</div>
+                <div class="glass-morphism p-8 text-center bg-white shadow-xl mt-8 text-3xl">🎨</div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-16 px-6">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-stone-400 text-sm">&copy; 2026 Future Research Lab AIRA.</p>
+        </div>
+    </footer>
+
+    <script>
+        const apiKey = ""; 
+        const characterKey = "dreamy_lab_character_v3";
+
+        // Utility: Exponential backoff for API calls
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) return response;
+                    // If server error, retry
+                    if (response.status >= 500) throw new Error(`Server Error: ${response.status}`);
+                    // If 403/404 etc, likely not worth retrying immediately without change
+                    return response;
+                } catch (err) {
+                    if (i === maxRetries - 1) throw err;
+                    const delay = Math.pow(2, i) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        // --- Gemini API Function: Chat with AIRA ---
+        async function callGemini(message) {
+            const systemPrompt = "あなたは『未来研究所AIRA』です。科学的かつ神秘的で、猫をこよなく愛する未来のAI研究員です。ユーザーのAIデザインやプロンプト制作、芸術的アドバイスをサポートします。丁寧で知的な口調の中に、たまに猫の絵文字を交えて親しみやすさを出してください。回答は日本語で行ってください。";
+            
+            try {
+                const response = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: message }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "AIRAの回路を再起動中です。もう一度送信してください。";
+            } catch (error) {
+                console.error("Gemini Error:", error);
+                return "サーバー接続が遮断されました。未来研究所のメインフレームを確認してください。";
+            }
+        }
+
+        // --- UI Logic: Chat ---
+        function toggleChat() {
+            const chat = document.getElementById('chat-window');
+            chat.style.display = chat.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const container = document.getElementById('chat-messages');
+            const text = input.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            input.value = '';
+
+            const loadingId = appendMessage('解析中...', 'ai');
+            const aiResponse = await callGemini(text);
+            updateMessage(loadingId, aiResponse);
+        }
+
+        function appendMessage(text, sender) {
+            const container = document.getElementById('chat-messages');
+            const bubble = document.createElement('div');
+            const id = 'msg-' + Date.now();
+            bubble.id = id;
+            bubble.className = `message-bubble ${sender}-message`;
+            bubble.innerText = text;
+            container.appendChild(bubble);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
+
+        function updateMessage(id, text) {
+            const bubble = document.getElementById(id);
+            if (bubble) bubble.innerText = text;
+            document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+        }
+
+        async function generateIdea() {
+            const display = document.getElementById('idea-display');
+            display.classList.remove('hidden');
+            display.innerText = "✨ 未来の断片を抽出中...";
+            
+            const prompt = "AIデザインの未来的な実験案を1つ、日本語で短く提案してください。";
+            const idea = await callGemini(prompt);
+            display.innerText = idea;
+        }
+
+        // --- Image Generation: AIRA Visual ---
+        async function generateNewAvatar() {
+            const avatarWrapper = document.getElementById('avatar-wrapper');
+            const loader = document.getElementById('loader');
+            loader.classList.remove('hidden');
+
+            const prompt = "A high-quality, cute chibi anime style illustration of a futuristic female scientist named AIRA with long silver/white hair, wearing a high-tech white lab coat, round glasses, and white cat-ear headphones. Three cute cats accompany her. Futuristic dreamy laboratory background with digital particles. Pastel and neon accents, soft lighting.";
+
+            try {
+                const response = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ instances: [{ prompt }], parameters: { sampleCount: 1 } })
+                });
+
+                if (!response) throw new Error("No response from Imagen API");
+                
+                const result = await response.json();
+                
+                if (result.predictions && result.predictions[0] && result.predictions[0].bytesBase64Encoded) {
+                    const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                    const img = `<img id="dynamic-avatar" src="${imageUrl}" class="w-full h-full object-cover">`;
+                    avatarWrapper.innerHTML = img;
+                    document.getElementById('mini-avatar-container').innerHTML = img;
+                    localStorage.setItem(characterKey, imageUrl);
+                } else {
+                    console.error("Invalid response format from Imagen API", result);
+                }
+            } catch (error) {
+                console.error("Imagen Error:", error);
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        window.onload = () => {
+            const saved = localStorage.getItem(characterKey);
+            if (saved) {
+                document.getElementById('avatar-wrapper').innerHTML = `<img id="dynamic-avatar" src="${saved}">`;
+                document.getElementById('mini-avatar-container').innerHTML = `<img src="${saved}" class="w-full h-full object-cover">`;
+            } else {
+                generateNewAvatar();
+            }
+        };
+
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        document.addEventListener('mousedown', (e) => {
+            const symbols = ['🧪', '✨', '🐾', '🧬'];
+            for(let i = 0; i < 5; i++) {
+                const p = document.createElement('div');
+                p.className = 'magic-particle';
+                p.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                p.style.left = e.clientX + 'px';
+                p.style.top = e.clientY + 'px';
+                p.style.setProperty('--mx', (Math.random() - 0.5) * 100 + 'px');
+                p.style.setProperty('--my', (Math.random() - 0.5) * 100 + 'px');
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1000);
+            }
+        });
+    </script>
+</body>
+</html>
